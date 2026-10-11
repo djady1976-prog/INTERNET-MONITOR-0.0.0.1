@@ -36,7 +36,7 @@ export const NetworkDetailsWidget: React.FC<Props> = ({ telemetry, theme, onRefr
   ];
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Network className="w-4 h-4 text-cyan-400" />
@@ -54,7 +54,7 @@ export const NetworkDetailsWidget: React.FC<Props> = ({ telemetry, theme, onRefr
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 flex-1 min-h-[140px] overflow-y-auto pr-1">
         {details.map((item) => (
           <div
             key={item.key}

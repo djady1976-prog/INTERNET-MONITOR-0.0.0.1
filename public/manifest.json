@@ -1,0 +1,38 @@
+{
+  "id": "/",
+  "name": "NetPulse Neon - Monitor Internet & Rețea Windows",
+  "short_name": "NetPulse",
+  "description": "Software futurist dark-neon pentru monitorizarea conexiunii la internet pe Windows cu grafice în timp real, teste de viteză, traceroute și tablou de bord.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#080b11",
+  "theme_color": "#080b11",
+  "categories": ["utilities", "productivity", "network"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 48x48 32x32 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

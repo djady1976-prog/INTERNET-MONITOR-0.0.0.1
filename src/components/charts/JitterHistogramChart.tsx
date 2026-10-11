@@ -166,7 +166,7 @@ export const JitterHistogramChart: React.FC<Props> = ({
   const maxCount = Math.max(...bins.map((b) => b.count), 1);
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg relative overflow-hidden group">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg relative overflow-hidden group">
       {/* Background ambient gradient glow */}
       <div
         className="absolute -top-16 -right-16 w-36 h-36 rounded-full blur-3xl pointer-events-none opacity-20"
@@ -268,7 +268,7 @@ export const JitterHistogramChart: React.FC<Props> = ({
       </div>
 
       {/* Histogram Bar Canvas Container */}
-      <div className="relative w-full h-36 pt-4 pb-1 px-2 border-b border-white/10 flex items-end">
+      <div className="relative w-full flex-1 min-h-[140px] pt-4 pb-1 px-2 border-b border-white/10 flex items-end">
         {/* Subtle Horizontal grid lines at 25%, 50%, 75%, 100% */}
         <div className="absolute inset-x-2 top-4 bottom-1 pointer-events-none flex flex-col justify-between opacity-15">
           <div className="border-b border-dashed border-white w-full" />
@@ -307,7 +307,7 @@ export const JitterHistogramChart: React.FC<Props> = ({
                 </div>
 
                 {/* Explicit Height Track Container */}
-                <div className="w-full max-w-[36px] h-24 bg-slate-900/80 rounded-t border border-white/10 overflow-hidden relative flex items-end shadow-inner">
+                <div className="w-full max-w-[42px] h-full max-h-[180px] min-h-[70px] bg-slate-900/80 rounded-t border border-white/10 overflow-hidden relative flex items-end shadow-inner">
                   {/* Peak Hold Tick Line (Audio Spectrum style) */}
                   {bin.count > 0 && (
                     <div

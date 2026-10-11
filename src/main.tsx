@@ -5,7 +5,11 @@ import { registerSW } from 'virtual:pwa-register';
 
 // Register service worker for installable desktop PWA and offline runtime
 if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  registerSW({ immediate: true });
+  try {
+    registerSW({ immediate: true });
+  } catch {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 }
 
 createRoot(document.getElementById('root')!).render(<App />);

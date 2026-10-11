@@ -232,6 +232,25 @@ export interface TranslationSchema {
   developerRole: string;
   appVersion: string;
   engineBuild: string;
+
+  // Resizable Windows & Cards
+  resizeWindow: string;
+  resizeColWidth: string;
+  resizeHeightPreset: string;
+  resizeResetCard: string;
+  minimizeCard: string;
+  expandCard: string;
+  dragToResizeHeight: string;
+  heightLabel: string;
+  col1Label: string;
+  col2Label: string;
+  colFullLabel: string;
+  equalizeHeights: string;
+  resetAllSizes: string;
+  allCompact: string;
+  allStandard: string;
+  allExpanded: string;
+  cardResizedNotice: string;
 }
 
 export const translations: Record<SupportedLanguage, TranslationSchema> = {
@@ -454,6 +473,25 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
     developerRole: 'Arhitect Software & Inginer de Sistem',
     appVersion: 'Versiune: v2.4.0 Pro Edition',
     engineBuild: 'Motor Telemetrie Timp Real Win64',
+
+    // Resizable Windows & Cards
+    resizeWindow: 'Redimensionează Fereastra',
+    resizeColWidth: 'Lățime Coloană',
+    resizeHeightPreset: 'Înălțime Fereastră',
+    resizeResetCard: 'Resetează la Mărimea Inițială',
+    minimizeCard: 'Restrânge / Minimizează Card',
+    expandCard: 'Extinde / Restaurează Card',
+    dragToResizeHeight: 'Trage marginea pentru a ajusta înălțimea',
+    heightLabel: 'Înălțime',
+    col1Label: '1 Coloană (Normal)',
+    col2Label: '2 Coloane (Dublu)',
+    colFullLabel: 'Complet (Ecran Întreg)',
+    equalizeHeights: 'Aliniere & Înălțimi Egale',
+    resetAllSizes: 'Resetează Toate Dimensiunile',
+    allCompact: 'Toate Compacte (S)',
+    allStandard: 'Toate Standard (M)',
+    allExpanded: 'Toate Extinse (L)',
+    cardResizedNotice: 'Dimensiunea ferestrei a fost actualizată.',
   },
 
   en: {
@@ -675,6 +713,25 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
     developerRole: 'Software Architect & System Engineer',
     appVersion: 'Version: v2.4.0 Pro Edition',
     engineBuild: 'Win64 Real-Time Telemetry Engine',
+
+    // Resizable Windows & Cards
+    resizeWindow: 'Resize Window',
+    resizeColWidth: 'Column Width',
+    resizeHeightPreset: 'Window Height',
+    resizeResetCard: 'Reset to Initial Size',
+    minimizeCard: 'Collapse / Minimize Card',
+    expandCard: 'Expand / Restore Card',
+    dragToResizeHeight: 'Drag bottom edge to adjust height',
+    heightLabel: 'Height',
+    col1Label: '1 Column (Standard)',
+    col2Label: '2 Columns (Wide)',
+    colFullLabel: 'Full (Widescreen)',
+    equalizeHeights: 'Align & Equalize Heights',
+    resetAllSizes: 'Reset All Card Sizes',
+    allCompact: 'All Compact (S)',
+    allStandard: 'All Standard (M)',
+    allExpanded: 'All Expanded (L)',
+    cardResizedNotice: 'Window layout dimension updated.',
   },
 
   it: {
@@ -896,6 +953,25 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
     developerRole: 'Architetto Software & Ingegnere di Sistema',
     appVersion: 'Versione: v2.4.0 Pro Edition',
     engineBuild: 'Motore di Telemetria in Tempo Reale Win64',
+
+    // Resizable Windows & Cards
+    resizeWindow: 'Ridimensiona Finestra',
+    resizeColWidth: 'Larghezza Colonna',
+    resizeHeightPreset: 'Altezza Finestra',
+    resizeResetCard: 'Ripristina Dimensione Iniziale',
+    minimizeCard: 'Comprimi / Riduci Scheda',
+    expandCard: 'Espandi / Ripristina Scheda',
+    dragToResizeHeight: 'Trascina il bordo per regolare l\'altezza',
+    heightLabel: 'Altezza',
+    col1Label: '1 Colonna (Normale)',
+    col2Label: '2 Colonne (Doppia)',
+    colFullLabel: 'Completa (Schermo Intero)',
+    equalizeHeights: 'Allinea & Altezze Uguali',
+    resetAllSizes: 'Ripristina Tutte le Dimensioni',
+    allCompact: 'Tutte Compatte (S)',
+    allStandard: 'Tutte Standard (M)',
+    allExpanded: 'Tutte Espanse (L)',
+    cardResizedNotice: 'Dimensione della finestra aggiornata.',
   },
 
   de: {
@@ -1117,6 +1193,25 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
     developerRole: 'Software-Architekt & System-Ingenieur',
     appVersion: 'Version: v2.4.0 Pro Edition',
     engineBuild: 'Echtzeit-Telemetrie-Engine Win64',
+
+    // Resizable Windows & Cards
+    resizeWindow: 'Fenstergröße Anpassen',
+    resizeColWidth: 'Spaltenbreite',
+    resizeHeightPreset: 'Fensterhöhe',
+    resizeResetCard: 'Auf Standardgröße Zurücksetzen',
+    minimizeCard: 'Karte Minimieren / Einklappen',
+    expandCard: 'Karte Erweitern / Wiederherstellen',
+    dragToResizeHeight: 'Ziehen zum Anpassen der Höhe',
+    heightLabel: 'Höhe',
+    col1Label: '1 Spalte (Standard)',
+    col2Label: '2 Spalten (Breit)',
+    colFullLabel: 'Vollbild (Gesamte Breite)',
+    equalizeHeights: 'Ausrichten & Gleiche Höhen',
+    resetAllSizes: 'Alle Größen Zurücksetzen',
+    allCompact: 'Alle Kompakt (S)',
+    allStandard: 'Alle Standard (M)',
+    allExpanded: 'Alle Erweitert (L)',
+    cardResizedNotice: 'Fensterabmessungen wurden aktualisiert.',
   },
 };
 

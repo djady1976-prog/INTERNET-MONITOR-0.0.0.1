@@ -110,7 +110,7 @@ export const WaveformOscilloscope: React.FC<Props> = ({
   }, []);
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Radio className="w-4 h-4 text-cyan-400" />
@@ -123,8 +123,16 @@ export const WaveformOscilloscope: React.FC<Props> = ({
         </span>
       </div>
 
-      <div className="relative w-full h-24 rounded-lg bg-[#070a12] border border-white/10 overflow-hidden flex items-center justify-center">
-        <canvas ref={canvasRef} width={600} height={96} className="w-full h-full" />
+      <div className="relative w-full flex-1 min-h-[140px] rounded-lg bg-[#070a12] border border-white/10 overflow-hidden flex items-center justify-center my-2">
+        <canvas ref={canvasRef} width={600} height={140} className="w-full h-full" />
+      </div>
+
+      <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-2 border-t border-white/5">
+        <span className="flex items-center gap-1.5 text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Modulație Activă
+        </span>
+        <span>Rată Eșantion: 60 FPS</span>
       </div>
     </div>
   );

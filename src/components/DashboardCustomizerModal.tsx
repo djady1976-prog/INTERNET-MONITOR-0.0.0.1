@@ -1,7 +1,7 @@
 import React from 'react';
 import { NeonTheme, WidgetConfig, SupportedLanguage } from '../types';
 import { THEME_CONFIG } from '../utils/themeConfig';
-import { X, Check, Sliders, Eye, EyeOff, LayoutGrid, Clock, Bell, Sparkles, Globe } from 'lucide-react';
+import { X, Check, Sliders, Eye, EyeOff, LayoutGrid, Clock, Bell, Sparkles, Globe, Maximize2 } from 'lucide-react';
 import { cyberSound } from '../utils/cyberSound';
 import { translations, SUPPORTED_LANGUAGES } from '../i18n/translations';
 
@@ -22,6 +22,11 @@ interface Props {
   onChangeColumnsLayout: (layout: '2col' | '3col' | 'compact') => void;
   lang: SupportedLanguage;
   onSelectLanguage: (lang: SupportedLanguage) => void;
+  onEqualizeHeights?: () => void;
+  onAllCompact?: () => void;
+  onAllStandard?: () => void;
+  onAllExpanded?: () => void;
+  onResetAllDimensions?: () => void;
 }
 
 export const DashboardCustomizerModal: React.FC<Props> = ({
@@ -41,6 +46,11 @@ export const DashboardCustomizerModal: React.FC<Props> = ({
   onChangeColumnsLayout,
   lang,
   onSelectLanguage,
+  onEqualizeHeights,
+  onAllCompact,
+  onAllStandard,
+  onAllExpanded,
+  onResetAllDimensions,
 }) => {
   if (!isOpen) return null;
   const t = translations[lang];
@@ -193,6 +203,56 @@ export const DashboardCustomizerModal: React.FC<Props> = ({
                   </button>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* 2.5 Resizable Windows & Card Dimensions */}
+          <div className="p-3.5 rounded-xl bg-[#080d16] border border-white/5 space-y-2.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Maximize2 className="w-3.5 h-3.5 text-cyan-400" /> {t.resizeWindow}
+              </span>
+              <span className="text-[10px] font-mono text-cyan-400 font-normal">
+                {t.dragToResizeHeight}
+              </span>
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+              <button
+                onClick={() => {
+                  cyberSound.playClick();
+                  onAllCompact?.();
+                }}
+                className="py-1.5 px-2 rounded-lg border border-white/10 bg-[#0c121e] hover:bg-white/5 hover:border-cyan-400/50 text-slate-300 hover:text-white transition cursor-pointer text-center"
+              >
+                {t.allCompact}
+              </button>
+              <button
+                onClick={() => {
+                  cyberSound.playClick();
+                  onAllStandard?.();
+                }}
+                className="py-1.5 px-2 rounded-lg border border-white/10 bg-[#0c121e] hover:bg-white/5 hover:border-cyan-400/50 text-slate-300 hover:text-white transition cursor-pointer text-center"
+              >
+                {t.allStandard}
+              </button>
+              <button
+                onClick={() => {
+                  cyberSound.playClick();
+                  onAllExpanded?.();
+                }}
+                className="py-1.5 px-2 rounded-lg border border-white/10 bg-[#0c121e] hover:bg-white/5 hover:border-cyan-400/50 text-slate-300 hover:text-white transition cursor-pointer text-center"
+              >
+                {t.allExpanded}
+              </button>
+              <button
+                onClick={() => {
+                  cyberSound.playClick();
+                  onResetAllDimensions?.();
+                }}
+                className="py-1.5 px-2 rounded-lg border border-white/10 bg-[#0c121e] hover:bg-white/5 hover:border-rose-400/50 text-slate-300 hover:text-rose-300 transition cursor-pointer text-center"
+              >
+                {t.resetAllSizes}
+              </button>
             </div>
           </div>
 

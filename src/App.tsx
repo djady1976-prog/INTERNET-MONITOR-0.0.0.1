@@ -44,6 +44,10 @@ import { PingTargetsManagerWidget } from './components/widgets/PingTargetsManage
 import { LocalTopologyDiagram } from './components/charts/LocalTopologyDiagram';
 import { AboutCardModal } from './components/AboutCardModal';
 import { AboutCardWidget } from './components/widgets/AboutCardWidget';
+import {
+  ResizableCard,
+  CardDimensionState,
+} from './components/ResizableCard';
 import { downloadFile } from './utils/windowsPackage';
 import {
   Activity,
@@ -54,6 +58,22 @@ import {
   FileCode,
   Globe,
   Sparkles,
+  LayoutGrid,
+  Network,
+  Gauge,
+  BarChart3,
+  Radio,
+  Cloud,
+  Zap,
+  Shield,
+  PieChart,
+  Route,
+  Cpu,
+  Server,
+  Terminal,
+  RotateCcw,
+  Maximize2,
+  ChevronDown,
 } from 'lucide-react';
 
 const getInitialWidgets = (t: TranslationSchema): WidgetConfig[] => [
@@ -74,6 +94,24 @@ const getInitialWidgets = (t: TranslationSchema): WidgetConfig[] => [
   { id: 'details', title: t.techDetailsTitle, category: 'details', visible: true, colSpan: 'half' },
   { id: 'logs', title: t.logsTitle, category: 'logs', visible: true, colSpan: 'half' },
 ];
+
+const DEFAULT_CARD_DIMENSIONS: Record<string, CardDimensionState> = {
+  topology: { colSpan: '3', height: 430, heightPreset: 'standard' },
+  about: { colSpan: '3', height: 260, heightPreset: 'compact' },
+  latency: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  speedtest: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  histogram: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  waveform: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  servers: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  bandwidth: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  qos: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  protocol: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  hops: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  details: { colSpan: '1', height: 400, heightPreset: 'standard' },
+  targets: { colSpan: '3', height: 380, heightPreset: 'standard' },
+  packets: { colSpan: '3', height: 360, heightPreset: 'standard' },
+  logs: { colSpan: '3', height: 420, heightPreset: 'standard' },
+};
 
 export default function App() {
   // Language State
@@ -104,6 +142,28 @@ export default function App() {
 
   // Dashboard configuration & Modals
   const [widgets, setWidgets] = useState<WidgetConfig[]>(() => getInitialWidgets(translations.ro));
+
+  // Card dimensions state (Width colSpan, custom height in px, heightPreset, isCollapsed)
+  const [cardDimensions, setCardDimensions] = useState<Record<string, CardDimensionState>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('netpulse_card_dimensions_v2');
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return DEFAULT_CARD_DIMENSIONS;
+  });
+
+  const handleCardDimensionChange = (id: string, updated: Partial<CardDimensionState>) => {
+    setCardDimensions((prev) => {
+      const existing = prev[id] || { colSpan: '1' };
+      const next = { ...prev, [id]: { ...existing, ...updated } };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('netpulse_card_dimensions_v2', JSON.stringify(next));
+      }
+      return next;
+    });
+  };
 
   // Sync widget titles when language changes
   useEffect(() => {
@@ -422,15 +482,106 @@ export default function App() {
     return w ? w.visible : true;
   };
 
-  // Grid layout class
+  // Global Card Dimension Presets
+  const handleEqualizeHeights = () => {
+    cyberSound.playClick();
+    setColumnsLayout('2col');
+    setCardDimensions((prev) => {
+      const next: Record<string, CardDimensionState> = {};
+      Object.keys(DEFAULT_CARD_DIMENSIONS).forEach((key) => {
+        next[key] = {
+          colSpan: prev[key]?.colSpan || DEFAULT_CARD_DIMENSIONS[key].colSpan,
+          height: 400,
+          heightPreset: 'standard',
+          isCollapsed: false,
+        };
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('netpulse_card_dimensions_v2', JSON.stringify(next));
+      }
+      return next;
+    });
+    addLog('info', `${t.equalizeHeights} (400px).`, 'Layout');
+  };
+
+  const handleAllCompact = () => {
+    cyberSound.playClick();
+    setCardDimensions((prev) => {
+      const next: Record<string, CardDimensionState> = {};
+      Object.keys(DEFAULT_CARD_DIMENSIONS).forEach((key) => {
+        next[key] = {
+          colSpan: prev[key]?.colSpan || DEFAULT_CARD_DIMENSIONS[key].colSpan,
+          height: 290,
+          heightPreset: 'compact',
+          isCollapsed: false,
+        };
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('netpulse_card_dimensions_v2', JSON.stringify(next));
+      }
+      return next;
+    });
+    addLog('info', `${t.allCompact} (290px).`, 'Layout');
+  };
+
+  const handleAllStandard = () => {
+    cyberSound.playClick();
+    setCardDimensions((prev) => {
+      const next: Record<string, CardDimensionState> = {};
+      Object.keys(DEFAULT_CARD_DIMENSIONS).forEach((key) => {
+        next[key] = {
+          colSpan: prev[key]?.colSpan || DEFAULT_CARD_DIMENSIONS[key].colSpan,
+          height: 400,
+          heightPreset: 'standard',
+          isCollapsed: false,
+        };
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('netpulse_card_dimensions_v2', JSON.stringify(next));
+      }
+      return next;
+    });
+    addLog('info', `${t.allStandard} (400px).`, 'Layout');
+  };
+
+  const handleAllExpanded = () => {
+    cyberSound.playClick();
+    setCardDimensions((prev) => {
+      const next: Record<string, CardDimensionState> = {};
+      Object.keys(DEFAULT_CARD_DIMENSIONS).forEach((key) => {
+        next[key] = {
+          colSpan: prev[key]?.colSpan || DEFAULT_CARD_DIMENSIONS[key].colSpan,
+          height: 560,
+          heightPreset: 'large',
+          isCollapsed: false,
+        };
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('netpulse_card_dimensions_v2', JSON.stringify(next));
+      }
+      return next;
+    });
+    addLog('info', `${t.allExpanded} (560px).`, 'Layout');
+  };
+
+  const handleResetAllDimensions = () => {
+    cyberSound.playClick();
+    setCardDimensions(DEFAULT_CARD_DIMENSIONS);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('netpulse_card_dimensions_v2', JSON.stringify(DEFAULT_CARD_DIMENSIONS));
+    }
+    addLog('info', t.resetAllSizes, 'Layout');
+  };
+
+  // Grid layout class with automatic alignment and balanced items-start
   const getGridClass = () => {
     if (columnsLayout === '3col') {
-      return 'grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4';
+      return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-start max-w-7xl mx-auto w-full';
     }
     if (columnsLayout === 'compact') {
-      return 'grid grid-cols-1 md:grid-cols-2 gap-3 max-w-6xl mx-auto';
+      return 'grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto items-start w-full';
     }
-    return 'grid grid-cols-1 lg:grid-cols-2 gap-4'; // standard 2col
+    return 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 max-w-7xl mx-auto items-start w-full'; // standard balanced 3col responsive grid
   };
 
   return (
@@ -581,6 +732,52 @@ export default function App() {
               <span>{t.aboutBtn}</span>
             </button>
 
+            {/* Auto-Align Windows & Equalize */}
+            <button
+              onClick={handleEqualizeHeights}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer ${
+                columnsLayout === '2col'
+                  ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 shadow-[0_0_12px_rgba(0,243,255,0.25)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/10 text-slate-200'
+              }`}
+              title={t.equalizeHeights}
+            >
+              <LayoutGrid className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{t.equalizeHeights}</span>
+            </button>
+
+            {/* Quick Dimension Presets: S / M / L / Reset */}
+            <div className="hidden sm:flex items-center bg-black/40 border border-white/10 rounded-lg p-0.5 text-xs">
+              <button
+                onClick={handleAllCompact}
+                className="px-2 py-1 rounded text-[11px] font-mono text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition cursor-pointer"
+                title={t.allCompact}
+              >
+                S
+              </button>
+              <button
+                onClick={handleAllStandard}
+                className="px-2 py-1 rounded text-[11px] font-mono text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition cursor-pointer"
+                title={t.allStandard}
+              >
+                M
+              </button>
+              <button
+                onClick={handleAllExpanded}
+                className="px-2 py-1 rounded text-[11px] font-mono text-slate-300 hover:text-cyan-300 hover:bg-white/5 transition cursor-pointer"
+                title={t.allExpanded}
+              >
+                L
+              </button>
+              <button
+                onClick={handleResetAllDimensions}
+                className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-white/5 transition cursor-pointer"
+                title={t.resetAllSizes}
+              >
+                <RotateCcw className="w-3 h-3" />
+              </button>
+            </div>
+
             {/* Customizer trigger */}
             <button
               onClick={() => {
@@ -650,29 +847,59 @@ export default function App() {
           </div>
         )}
 
-        {/* Dynamic Grid Layout */}
+        {/* Dynamic Grid Layout - Auto-Aligned & Centered */}
         <div className={getGridClass()}>
-          {/* Visual Node-Link Local Network Topology Diagram */}
+          {/* Row 1: Visual Node-Link Local Network Topology Diagram */}
           {isWidgetVisible('topology') && (
-            <div className={columnsLayout === '3col' ? 'col-span-1 xl:col-span-3' : 'col-span-1 lg:col-span-2'}>
+            <ResizableCard
+              id="topology"
+              title={t.localTopologyTitle}
+              icon={<Network className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.topology}
+              defaultColSpan="3"
+              defaultHeight={430}
+              onDimensionChange={handleCardDimensionChange}
+            >
               <LocalTopologyDiagram theme={theme} lang={lang} />
-            </div>
+            </ResizableCard>
           )}
 
-          {/* About Card: DEVELOPED BY: ANDREI ADRIAN BUTA */}
+          {/* Row 2: About Card: DEVELOPED BY: ANDREI ADRIAN BUTA */}
           {isWidgetVisible('about') && (
-            <div className={columnsLayout === '3col' ? 'col-span-1 xl:col-span-3' : 'col-span-1 lg:col-span-2'}>
+            <ResizableCard
+              id="about"
+              title={`${t.aboutTitle} (DEVELOPED BY: ANDREI ADRIAN BUTA)`}
+              icon={<Sparkles className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.about}
+              defaultColSpan="3"
+              defaultHeight={260}
+              onDimensionChange={handleCardDimensionChange}
+            >
               <AboutCardWidget
                 theme={theme}
                 lang={lang}
                 onOpenModal={() => setIsAboutOpen(true)}
               />
-            </div>
+            </ResizableCard>
           )}
 
-          {/* Real-Time Latency Area Chart */}
+          {/* Pair 1: Real-Time Latency Area Chart */}
           {isWidgetVisible('latency') && (
-            <div className={columnsLayout === '3col' ? 'col-span-1 xl:col-span-2' : 'col-span-1'}>
+            <ResizableCard
+              id="latency"
+              title={t.latencyChartTitle}
+              icon={<Activity className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.latency}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
               <LatencyAreaChart
                 data={pingHistory}
                 theme={theme}
@@ -682,120 +909,260 @@ export default function App() {
                 maxPingLimit={pingAlertThreshold}
                 lang={lang}
               />
-            </div>
+            </ResizableCard>
           )}
 
-          {/* Speed Test Pro Widget */}
+          {/* Pair 1: Speed Test Pro */}
           {isWidgetVisible('speedtest') && (
-            <SpeedTestWidget
-              state={speedTest}
-              onRunTest={handleRunSpeedTest}
+            <ResizableCard
+              id="speedtest"
+              title={t.speedTestTitle}
+              icon={<Gauge className="w-3.5 h-3.5" />}
               theme={theme}
               lang={lang}
-            />
+              dimensions={cardDimensions.speedtest}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <SpeedTestWidget
+                state={speedTest}
+                onRunTest={handleRunSpeedTest}
+                theme={theme}
+                lang={lang}
+              />
+            </ResizableCard>
           )}
 
-          {/* Multi-Server DNS & Cloud Ping Bars */}
-          {isWidgetVisible('servers') && (
-            <MultiServerPingChart
-              targets={pingTargets}
-              theme={theme}
-              onPingTarget={async (host) => {
-                cyberSound.playClick();
-                const p = await measureHttpPing(host);
-                setPingTargets((prev) =>
-                  prev.map((target) => (target.host === host ? { ...target, ping: p } : target))
-                );
-                addLog('info', `Ping ${host}: ${p}ms`, 'Probe');
-              }}
-              lang={lang}
-            />
-          )}
-
-          {/* Hop Traceroute & Network Route Topology */}
-          {isWidgetVisible('hops') && (
-            <TracerouteMapChart theme={theme} lang={lang} />
-          )}
-
-          {/* Quality of Service (QoS) Radar */}
-          {isWidgetVisible('qos') && (
-            <QoSRadarChart metrics={qos} theme={theme} lang={lang} />
-          )}
-
-          {/* Protocol Distribution Donut Chart */}
-          {isWidgetVisible('protocol') && (
-            <ProtocolDonutChart theme={theme} lang={lang} />
-          )}
-
-          {/* Packet Loss Health Matrix */}
-          {isWidgetVisible('packets') && (
-            <div className={columnsLayout === '3col' ? 'col-span-1 xl:col-span-3' : 'col-span-1 lg:col-span-2'}>
-              <PacketLossMatrix pingHistory={pingHistory} theme={theme} lang={lang} />
-            </div>
-          )}
-
-          {/* Jitter Spectral Histogram */}
+          {/* Pair 2: Jitter Spectral Histogram */}
           {isWidgetVisible('histogram') && (
-            <JitterHistogramChart
-              pingHistory={pingHistory}
-              jitterHistory={jitterHistory}
-              currentJitter={jitter}
-              currentPing={currentPing}
+            <ResizableCard
+              id="histogram"
+              title={t.histogramTitle}
+              icon={<BarChart3 className="w-3.5 h-3.5" />}
               theme={theme}
               lang={lang}
-            />
+              dimensions={cardDimensions.histogram}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <JitterHistogramChart
+                pingHistory={pingHistory}
+                jitterHistory={jitterHistory}
+                currentJitter={jitter}
+                currentPing={currentPing}
+                theme={theme}
+                lang={lang}
+              />
+            </ResizableCard>
           )}
 
-          {/* Live Waveform Oscilloscope */}
+          {/* Pair 2: Live Waveform Oscilloscope */}
           {isWidgetVisible('waveform') && (
-            <WaveformOscilloscope
+            <ResizableCard
+              id="waveform"
+              title={t.waveformTitle}
+              icon={<Radio className="w-3.5 h-3.5" />}
               theme={theme}
-              isPaused={isPaused}
-              activityLevel={Math.min(1, currentPing / 80)}
               lang={lang}
-            />
+              dimensions={cardDimensions.waveform}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <WaveformOscilloscope
+                theme={theme}
+                isPaused={isPaused}
+                activityLevel={Math.min(1, currentPing / 80)}
+                lang={lang}
+              />
+            </ResizableCard>
           )}
 
-          {/* Bandwidth Consumption Accumulator */}
+          {/* Pair 3: Multi-Server DNS & Cloud Ping */}
+          {isWidgetVisible('servers') && (
+            <ResizableCard
+              id="servers"
+              title={t.multiServerTitle}
+              icon={<Cloud className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.servers}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <MultiServerPingChart
+                targets={pingTargets}
+                theme={theme}
+                onPingTarget={async (host) => {
+                  cyberSound.playClick();
+                  const p = await measureHttpPing(host);
+                  setPingTargets((prev) =>
+                    prev.map((target) => (target.host === host ? { ...target, ping: p } : target))
+                  );
+                  addLog('info', `Ping ${host}: ${p}ms`, 'Probe');
+                }}
+                lang={lang}
+              />
+            </ResizableCard>
+          )}
+
+          {/* Pair 3: Bandwidth History */}
           {isWidgetVisible('bandwidth') && (
-            <BandwidthHistoryChart theme={theme} lang={lang} />
-          )}
-
-          {/* Custom Ping Targets Manager */}
-          {isWidgetVisible('targets') && (
-            <PingTargetsManagerWidget
-              targets={pingTargets}
-              onAddTarget={handleAddTarget}
-              onRemoveTarget={handleRemoveTarget}
+            <ResizableCard
+              id="bandwidth"
+              title={t.bandwidthTitle}
+              icon={<Zap className="w-3.5 h-3.5" />}
               theme={theme}
               lang={lang}
-            />
+              dimensions={cardDimensions.bandwidth}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <BandwidthHistoryChart theme={theme} lang={lang} />
+            </ResizableCard>
           )}
 
-          {/* Technical Network Details & Parameters */}
+          {/* Pair 4: Quality of Service (QoS) Radar */}
+          {isWidgetVisible('qos') && (
+            <ResizableCard
+              id="qos"
+              title={t.qosTitle}
+              icon={<Shield className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.qos}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <QoSRadarChart metrics={qos} theme={theme} lang={lang} />
+            </ResizableCard>
+          )}
+
+          {/* Pair 4: Protocol Donut Chart */}
+          {isWidgetVisible('protocol') && (
+            <ResizableCard
+              id="protocol"
+              title={t.protocolTitle}
+              icon={<PieChart className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.protocol}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <ProtocolDonutChart theme={theme} lang={lang} />
+            </ResizableCard>
+          )}
+
+          {/* Pair 5: Traceroute Map */}
+          {isWidgetVisible('hops') && (
+            <ResizableCard
+              id="hops"
+              title={t.tracerouteTitle}
+              icon={<Route className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.hops}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <TracerouteMapChart theme={theme} lang={lang} />
+            </ResizableCard>
+          )}
+
+          {/* Pair 5: Technical Details */}
           {isWidgetVisible('details') && (
-            <NetworkDetailsWidget
-              telemetry={telemetry}
+            <ResizableCard
+              id="details"
+              title={t.techDetailsTitle}
+              icon={<Cpu className="w-3.5 h-3.5" />}
               theme={theme}
-              onRefresh={async () => {
-                cyberSound.playClick();
-                await refreshTelemetryData();
-                addLog('info', 'Technical network telemetry and Geo-IP parameters refreshed.', 'System');
-              }}
               lang={lang}
-            />
+              dimensions={cardDimensions.details}
+              defaultColSpan="1"
+              defaultHeight={400}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <NetworkDetailsWidget
+                telemetry={telemetry}
+                theme={theme}
+                onRefresh={async () => {
+                  cyberSound.playClick();
+                  await refreshTelemetryData();
+                  addLog('info', 'Parametrii tehnici de rețea au fost actualizați.', 'System');
+                }}
+                lang={lang}
+              />
+            </ResizableCard>
           )}
 
-          {/* Real-Time Diagnostics Terminal Log */}
+          {/* Row 6: Custom Ping Targets Manager */}
+          {isWidgetVisible('targets') && (
+            <ResizableCard
+              id="targets"
+              title={t.targetsTitle}
+              icon={<Server className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.targets}
+              defaultColSpan="3"
+              defaultHeight={380}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <PingTargetsManagerWidget
+                targets={pingTargets}
+                onAddTarget={handleAddTarget}
+                onRemoveTarget={handleRemoveTarget}
+                theme={theme}
+                lang={lang}
+              />
+            </ResizableCard>
+          )}
+
+          {/* Row 7: Packet Loss Health Matrix */}
+          {isWidgetVisible('packets') && (
+            <ResizableCard
+              id="packets"
+              title={t.packetMatrixTitle}
+              icon={<AlertTriangle className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.packets}
+              defaultColSpan="3"
+              defaultHeight={360}
+              onDimensionChange={handleCardDimensionChange}
+            >
+              <PacketLossMatrix pingHistory={pingHistory} theme={theme} lang={lang} />
+            </ResizableCard>
+          )}
+
+          {/* Row 8: Real-Time Diagnostics Terminal Log */}
           {isWidgetVisible('logs') && (
-            <div className={columnsLayout === '3col' ? 'col-span-1 xl:col-span-3' : 'col-span-1 lg:col-span-2'}>
+            <ResizableCard
+              id="logs"
+              title={t.logsTitle}
+              icon={<Terminal className="w-3.5 h-3.5" />}
+              theme={theme}
+              lang={lang}
+              dimensions={cardDimensions.logs}
+              defaultColSpan="3"
+              defaultHeight={420}
+              onDimensionChange={handleCardDimensionChange}
+            >
               <DiagnosticsLogWidget
                 logs={logs}
                 onClearLogs={() => setLogs([])}
                 theme={theme}
                 lang={lang}
               />
-            </div>
+            </ResizableCard>
           )}
         </div>
       </main>
@@ -851,6 +1218,11 @@ export default function App() {
         onChangeColumnsLayout={setColumnsLayout}
         lang={lang}
         onSelectLanguage={handleSelectLanguage}
+        onEqualizeHeights={handleEqualizeHeights}
+        onAllCompact={handleAllCompact}
+        onAllStandard={handleAllStandard}
+        onAllExpanded={handleAllExpanded}
+        onResetAllDimensions={handleResetAllDimensions}
       />
 
       {/* 6. Windows Installer & Packages Modal */}

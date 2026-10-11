@@ -491,7 +491,7 @@ export const LocalTopologyDiagram: React.FC<Props> = ({ theme, lang }) => {
       </div>
 
       {/* Main Visual Node-Link Diagram Canvas */}
-      <div className="relative w-full aspect-[21/9] min-h-[300px] max-h-[380px] rounded-xl bg-[#070b14] border border-white/10 overflow-hidden select-none">
+      <div className="relative w-full flex-1 min-h-[280px] rounded-xl bg-[#070b14] border border-white/10 overflow-hidden select-none">
         {/* Ambient Grid Background */}
         <div className="absolute inset-0 cyber-grid-bg opacity-40 pointer-events-none" />
 

@@ -1,58 +1,45 @@
 @echo off
-:: =====================================================================
-:: NetPulse Neon - Launcher Local Windows
-:: Dublu-click pe acest fisier pentru a porni NetPulse pe calculator
-:: =====================================================================
-title NetPulse Neon - Windows Local Launcher
+setlocal
+title NetPulse Neon - Server Local & Launcher
 color 0b
 cls
 echo =====================================================================
-echo           NETPULSE NEON - PORNIRE APLICATIE PE CALCULATOR
+echo          NETPULSE NEON - PORNIRE APLICATIE & SERVER LOCAL
 echo =====================================================================
 echo.
-
-cd /d "%~dp0"
-
-echo [1/3] Verificare mediu de executie Node.js...
+echo [1/3] Verificare mediu Node.js...
 where node >nul 2>nul
-if %errorlevel% neq 0 (
+if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [EROARE] Node.js nu este instalat pe calculatorul dvs.
+    echo [INFO] Node.js nu este instalat pe acest calculator.
+    echo Pentru a rula aplicatia offline este necesar Node.js (v18 sau mai nou).
     echo.
-    echo Pentru a rula programul complet pe calculator, instalati Node.js gratuit:
-    echo https://nodejs.org/ (recomandat versiunea LTS)
+    echo Se deschide acum versiunea oficiala in browser:
+    start "" "https://ais-pre-bs6f727x7xca3snddw6co2-364287489555.europe-west3.run.app"
     echo.
-    echo In mod alternativ, puteti deschide versiunea standalone direct in browser:
-    echo Se deschide acum...
-    start https://ais-pre-bs6f727x7xca3snddw6co2-364287489555.europe-west3.run.app
+    echo Daca doriti instalare locala, descarcati Node.js gratuit de la: https://nodejs.org/
     echo.
     pause
     exit /b 1
 )
 
-echo       [OK] Node.js este detectat pe sistem.
+echo       [OK] Node.js detectat:
+node -v
 echo.
 
-echo [2/3] Verificare dependente (node_modules)...
-if not exist node_modules (
-    echo       Se instaleaza modulele necesare (npm install)... Aceasta dureaza un minut...
+echo [2/3] Verificare pachete si module (node_modules)...
+if not exist "node_modules\" (
+    echo       Se instaleaza modulele necesare (npm install)...
     call npm install
-    if %errorlevel% neq 0 (
-        echo [EROARE] Instalarea dependintelor a esuat. Verificati conexiunea la internet.
-        pause
-        exit /b 1
-    )
+) else (
+    echo       [OK] Modulele sunt deja instalate.
 )
-echo       [OK] Dependentele sunt pregatite.
+
+echo.
+echo [3/3] Pornire server NetPulse Neon pe http://localhost:3000...
 echo.
 
-echo [3/3] Lansare NetPulse Neon...
-echo       Se deschide interfata grafica in browser la http://localhost:3000
-echo.
+start "" cmd /c "timeout /t 3 >nul && start http://localhost:3000"
 
-:: Deschide automat browserul dupa 1.5 secunde
-start "" cmd /c "timeout /t 2 /nobreak >nul & start http://localhost:3000"
-
-:: Ruleaza serverul de dezvoltare
 call npm run dev
 pause

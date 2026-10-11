@@ -35,7 +35,7 @@ export const SpeedTestWidget: React.FC<Props> = ({ state, onRunTest, theme, lang
   };
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5 relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 relative overflow-hidden shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Gauge className="w-4 h-4 text-cyan-400" />

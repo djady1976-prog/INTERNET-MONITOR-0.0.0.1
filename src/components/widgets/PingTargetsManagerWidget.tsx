@@ -33,7 +33,7 @@ export const PingTargetsManagerWidget: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-cyan-400" />
@@ -72,7 +72,7 @@ export const PingTargetsManagerWidget: React.FC<Props> = ({
       </form>
 
       {/* Targets list */}
-      <div className="space-y-1.5 max-h-36 overflow-y-auto">
+      <div className="space-y-1.5 flex-1 min-h-[100px] overflow-y-auto pr-1">
         {targets.map((target) => (
           <div
             key={target.host}

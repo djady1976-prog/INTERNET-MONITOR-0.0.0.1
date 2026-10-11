@@ -28,7 +28,7 @@ export const DiagnosticsLogWidget: React.FC<Props> = ({ logs, onClearLogs, theme
   };
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-2">
           <Terminal className="w-4 h-4 text-cyan-400" />
@@ -88,7 +88,7 @@ export const DiagnosticsLogWidget: React.FC<Props> = ({ logs, onClearLogs, theme
       </div>
 
       {/* Terminal Viewport */}
-      <div className="h-44 rounded-lg bg-[#06090f] border border-white/10 p-3 overflow-y-auto font-mono text-xs space-y-1.5">
+      <div className="flex-1 min-h-[140px] rounded-lg bg-[#06090f] border border-white/10 p-3 overflow-y-auto font-mono text-xs space-y-1.5">
         {filtered.length === 0 ? (
           <div className="text-slate-600 text-center py-12">{t.noEvents}</div>
         ) : (

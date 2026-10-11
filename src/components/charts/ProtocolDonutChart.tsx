@@ -36,7 +36,7 @@ export const ProtocolDonutChart: React.FC<Props> = ({ theme, lang }) => {
   let accumulatedPercent = 0;
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <PieChart className="w-4 h-4 text-cyan-400" />

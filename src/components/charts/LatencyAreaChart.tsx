@@ -61,7 +61,7 @@ export const LatencyAreaChart: React.FC<Props> = ({
   const avgY = paddingY + chartHeight - ((avgPing - minVal) / Math.max(1, maxVal - minVal)) * chartHeight;
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5 relative overflow-hidden">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 relative overflow-hidden shadow-lg">
       {/* Header bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
         <div className="flex items-center gap-2">
@@ -88,8 +88,8 @@ export const LatencyAreaChart: React.FC<Props> = ({
       </div>
 
       {/* SVG Canvas Area Chart */}
-      <div className="relative w-full aspect-[4/1] min-h-[160px] max-h-[220px]">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
+      <div className="relative w-full flex-1 min-h-[160px] my-2">
+        <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" className="w-full h-full overflow-visible">
           <defs>
             <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={theme.primaryHex} stopOpacity="0.35" />

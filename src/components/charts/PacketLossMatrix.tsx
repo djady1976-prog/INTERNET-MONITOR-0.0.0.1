@@ -39,7 +39,7 @@ export const PacketLossMatrix: React.FC<Props> = ({ pingHistory, theme, lang }) 
   const healthPercent = Math.round(((sampleCount - droppedCount) / sampleCount) * 100);
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-cyan-400" />

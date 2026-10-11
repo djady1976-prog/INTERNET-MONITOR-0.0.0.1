@@ -19,7 +19,7 @@ export const MultiServerPingChart: React.FC<Props> = ({
   const t = translations[lang];
 
   return (
-    <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">
+    <div className="w-full h-full flex flex-col justify-between p-4 rounded-xl bg-[#0c121e]/90 border border-white/10 shadow-lg">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Server className="w-4 h-4 text-cyan-400" />
@@ -30,7 +30,7 @@ export const MultiServerPingChart: React.FC<Props> = ({
         <span className="text-[11px] text-slate-400 font-mono">{t.activeGlobalNodes}</span>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 flex-1 min-h-[140px] overflow-y-auto pr-1">
         {targets.map((target) => {
           const maxScale = 120;
           const barWidth = Math.min(100, Math.max(5, (target.ping / maxScale) * 100));
