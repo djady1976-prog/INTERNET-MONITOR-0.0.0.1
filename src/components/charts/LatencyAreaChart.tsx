@@ -25,9 +25,10 @@ export const LatencyAreaChart: React.FC<Props> = ({
   const [hoveredPoint, setHoveredPoint] = useState<{ index: number; value: number } | null>(null);
   const t = translations[lang];
 
-  const points = data.length > 0 ? data : [15, 16, 14, 15, 18, 14, 15];
-  const maxVal = Math.max(...points, maxPingLimit);
-  const minVal = Math.min(...points, 5);
+  const rawPoints = Array.isArray(data) ? data.filter((v) => typeof v === 'number' && Number.isFinite(v)) : [];
+  const points = rawPoints.length > 0 ? rawPoints : [15, 16, 14, 15, 18, 14, 15];
+  const maxVal = Math.max(...points, maxPingLimit, 30);
+  const minVal = Math.max(0, Math.min(...points, 5));
   const avgPing = Math.round(points.reduce((a, b) => a + b, 0) / points.length);
 
   const width = 800;
@@ -37,11 +38,12 @@ export const LatencyAreaChart: React.FC<Props> = ({
 
   const chartWidth = width - paddingX * 2;
   const chartHeight = height - paddingY * 2;
+  const range = Math.max(1, maxVal - minVal);
 
   // Build SVG path points
   const coords = points.map((val, idx) => {
     const x = paddingX + (idx / Math.max(1, points.length - 1)) * chartWidth;
-    const y = paddingY + chartHeight - ((val - minVal) / Math.max(1, maxVal - minVal)) * chartHeight;
+    const y = paddingY + chartHeight - ((val - minVal) / range) * chartHeight;
     return { x, y, val, idx };
   });
 

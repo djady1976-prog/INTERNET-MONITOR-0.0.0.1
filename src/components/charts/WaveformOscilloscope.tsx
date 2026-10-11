@@ -17,6 +17,14 @@ export const WaveformOscilloscope: React.FC<Props> = ({
   lang,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const phaseRef = useRef(0);
+  const activityRef = useRef(activityLevel);
+  activityRef.current = activityLevel;
+  const isPausedRef = useRef(isPaused);
+  isPausedRef.current = isPaused;
+  const themeHexRef = useRef(theme.primaryHex);
+  themeHexRef.current = theme.primaryHex;
+
   const t = translations[lang];
 
   useEffect(() => {
@@ -26,11 +34,12 @@ export const WaveformOscilloscope: React.FC<Props> = ({
     if (!ctx) return;
 
     let animationFrameId: number;
-    let phase = 0;
 
     const render = () => {
       const width = canvas.width;
       const height = canvas.height;
+      const currentThemeHex = themeHexRef.current;
+      const currentActivity = activityRef.current;
 
       ctx.clearRect(0, 0, width, height);
 
@@ -59,14 +68,15 @@ export const WaveformOscilloscope: React.FC<Props> = ({
       ctx.stroke();
 
       // Draw glowing waveform
-      ctx.strokeStyle = theme.primaryHex;
+      ctx.strokeStyle = currentThemeHex;
       ctx.lineWidth = 2.5;
       ctx.shadowBlur = 10;
-      ctx.shadowColor = theme.primaryHex;
+      ctx.shadowColor = currentThemeHex;
 
       ctx.beginPath();
       const centerY = height / 2;
-      const amplitude = Math.max(8, (height / 3.2) * (0.3 + activityLevel * 0.7));
+      const amplitude = Math.max(8, (height / 3.2) * (0.3 + currentActivity * 0.7));
+      const phase = phaseRef.current;
 
       for (let x = 0; x < width; x++) {
         const freq1 = 0.035;
@@ -86,8 +96,8 @@ export const WaveformOscilloscope: React.FC<Props> = ({
       ctx.stroke();
       ctx.shadowBlur = 0; // reset
 
-      if (!isPaused) {
-        phase += 0.07;
+      if (!isPausedRef.current) {
+        phaseRef.current += 0.07;
       }
       animationFrameId = requestAnimationFrame(render);
     };
@@ -97,7 +107,7 @@ export const WaveformOscilloscope: React.FC<Props> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [theme.primaryHex, isPaused, activityLevel]);
+  }, []);
 
   return (
     <div className="w-full flex flex-col p-4 rounded-xl bg-[#0c121e]/90 border border-white/5">

@@ -20,7 +20,9 @@ export const CircularSpeedGauge: React.FC<Props> = ({
   subText,
   accentColor,
 }) => {
-  const percentage = Math.min(100, Math.max(0, (value / max) * 100));
+  const safeVal = Number.isFinite(value) ? Math.max(0, value) : 0;
+  const safeMax = Number.isFinite(max) && max > 0 ? max : 100;
+  const percentage = Math.min(100, Math.max(0, (safeVal / safeMax) * 100));
   const strokeColor = accentColor || theme.primaryHex;
   const radius = 64;
   const strokeWidth = 8;

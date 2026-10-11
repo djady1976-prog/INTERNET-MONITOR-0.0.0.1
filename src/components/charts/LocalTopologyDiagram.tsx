@@ -219,6 +219,21 @@ export const LocalTopologyDiagram: React.FC<Props> = ({ theme, lang }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  // Sync localized node names when language changes
+  useEffect(() => {
+    setNodes((prev) =>
+      prev.map((n) => {
+        if (n.id === 'node-pc') return { ...n, name: t.deviceHostPC };
+        if (n.id === 'node-router') return { ...n, name: t.deviceMainRouter };
+        if (n.id === 'node-extender') return { ...n, name: t.deviceMeshExtender };
+        if (n.id === 'node-iot') return { ...n, name: t.deviceIoTGateway };
+        if (n.id === 'node-cellular') return { ...n, name: t.deviceCellularBackup };
+        if (n.id === 'node-nas') return { ...n, name: t.deviceNasGateway };
+        return n;
+      })
+    );
+  }, [lang, t]);
+
   // New Custom Device Form
   const [newDeviceName, setNewDeviceName] = useState('');
   const [newDeviceIp, setNewDeviceIp] = useState('');

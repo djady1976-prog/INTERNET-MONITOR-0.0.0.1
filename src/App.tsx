@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   NeonTheme,
   PingResult,
@@ -20,6 +20,7 @@ import {
   INITIAL_PING_TARGETS,
   measureHttpPing,
   fetchPublicNetworkInfo,
+  detectRealSystemTelemetry,
   calculateQoS,
   runLiveSpeedTest,
 } from './services/networkMonitor';
@@ -207,76 +208,131 @@ export default function App() {
     }
   };
 
-  // Fetch Public IP Info on load
-  useEffect(() => {
-    fetchPublicNetworkInfo().then((info) => {
+  // References for non-cyclical, rock-solid interval monitoring
+  const pingTargetsRef = useRef(pingTargets);
+  pingTargetsRef.current = pingTargets;
+
+  const pingAlertThresholdRef = useRef(pingAlertThreshold);
+  pingAlertThresholdRef.current = pingAlertThreshold;
+
+  const currentPingRef = useRef(currentPing);
+  currentPingRef.current = currentPing;
+
+  const isProbingRef = useRef(false);
+  const targetProbeIndexRef = useRef(0);
+  const lastAlertTimeRef = useRef(0);
+
+  // Accurate Telemetry Loader (combining browser socket telemetry + public Geo IP)
+  const refreshTelemetryData = useCallback(async () => {
+    const sys = detectRealSystemTelemetry();
+    setTelemetry((prev) => ({
+      ...prev,
+      ...sys,
+      lastUpdated: new Date().toLocaleTimeString(),
+    }));
+
+    try {
+      const net = await fetchPublicNetworkInfo();
       setTelemetry((prev) => ({
         ...prev,
-        ...info,
+        ...sys,
+        ...net,
         lastUpdated: new Date().toLocaleTimeString(),
       }));
-    });
+    } catch {
+      // Retain system telemetry
+    }
   }, []);
 
-  // Ping Measurement Loop
+  // Fetch Public IP Info on mount
+  useEffect(() => {
+    refreshTelemetryData();
+  }, [refreshTelemetryData]);
+
+  // Robust, Non-erratic Ping Measurement Loop
   useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(async () => {
-      // 1. Probe primary target
-      const primaryTarget = pingTargets[0] || INITIAL_PING_TARGETS[0];
-      const measured = await measureHttpPing(primaryTarget.host);
+      // Prevent overlapping concurrent probe requests
+      if (isProbingRef.current) return;
+      isProbingRef.current = true;
 
-      setCurrentPing(measured);
-      setPingHistory((prev) => {
-        const next = [...prev, measured];
-        return next.length > 60 ? next.slice(1) : next;
-      });
+      try {
+        const targets = pingTargetsRef.current;
+        const primaryTarget = targets[0] || INITIAL_PING_TARGETS[0];
+        const measured = await measureHttpPing(primaryTarget.host);
 
-      // Compute rolling jitter
-      setJitter((prevJitter) => {
-        const diff = Math.abs(measured - currentPing);
-        return Math.max(0.8, Math.round((prevJitter * 0.7 + diff * 0.3) * 10) / 10);
-      });
-
-      // Check packet loss spike
-      if (measured > 250) {
-        setPacketLoss((prev) => Math.min(15, prev + 1));
-      } else {
-        setPacketLoss((prev) => Math.max(0, prev - 0.2));
-      }
-
-      // Check threshold alert
-      if (measured > pingAlertThreshold) {
-        cyberSound.playAlert();
-        addLog('warning', `Latency spike: ${measured}ms (> ${pingAlertThreshold}ms threshold)`, 'Monitor');
-      } else {
-        cyberSound.playTick();
-      }
-
-      // 2. Rotate probe across secondary targets
-      setPingTargets((prev) => {
-        return prev.map((target, idx) => {
-          if (idx === 0) {
-            return {
-              ...target,
-              ping: measured,
-              history: [...target.history.slice(1), measured],
-            };
-          }
-          const variance = (Math.random() - 0.5) * 4;
-          const updatedPing = Math.max(8, Math.round(target.ping + variance));
-          return {
-            ...target,
-            ping: updatedPing,
-            history: [...target.history.slice(1), updatedPing],
-          };
+        const prevPing = currentPingRef.current;
+        setCurrentPing(measured);
+        setPingHistory((prev) => {
+          const next = [...prev, measured];
+          return next.length > 60 ? next.slice(1) : next;
         });
-      });
+
+        // RFC 3550 standard rolling jitter computation (smoothed exponential filter)
+        setJitter((prevJitter) => {
+          const diff = Math.abs(measured - prevPing);
+          const next = prevJitter + (diff - prevJitter) / 16;
+          return Math.max(0.5, Math.round(next * 10) / 10);
+        });
+
+        // Realistic packet loss estimation based on timeouts
+        if (measured >= 900) {
+          setPacketLoss((prev) => Math.min(100, Math.round((prev + 5) * 10) / 10));
+        } else {
+          setPacketLoss((prev) => Math.max(0, Math.round((prev * 0.75) * 10) / 10));
+        }
+
+        // Latency alert (rate-limited to max once every 5 seconds to prevent audio/log spam)
+        const now = Date.now();
+        if (measured > pingAlertThresholdRef.current) {
+          if (now - lastAlertTimeRef.current > 5000) {
+            cyberSound.playAlert();
+            addLog('warning', `Latency spike: ${measured}ms (> ${pingAlertThresholdRef.current}ms threshold)`, 'Monitor');
+            lastAlertTimeRef.current = now;
+          }
+        } else {
+          cyberSound.playTick();
+        }
+
+        // Sequentially probe one secondary target per cycle for 100% REAL telemetry
+        targetProbeIndexRef.current = (targetProbeIndexRef.current + 1) % Math.max(1, targets.length);
+        const secIdx = targetProbeIndexRef.current;
+
+        let secondaryMeasured: number | null = null;
+        if (secIdx > 0 && targets[secIdx]) {
+          secondaryMeasured = await measureHttpPing(targets[secIdx].host);
+        }
+
+        setPingTargets((prev) => {
+          return prev.map((target, idx) => {
+            if (idx === 0) {
+              return {
+                ...target,
+                ping: measured,
+                history: [...target.history.slice(1), measured],
+              };
+            }
+            if (idx === secIdx && secondaryMeasured !== null) {
+              return {
+                ...target,
+                ping: secondaryMeasured,
+                history: [...target.history.slice(1), secondaryMeasured],
+              };
+            }
+            return target;
+          });
+        });
+      } catch {
+        // Safe catch prevents interval termination
+      } finally {
+        isProbingRef.current = false;
+      }
     }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [isPaused, refreshInterval, pingTargets, currentPing, pingAlertThreshold, addLog]);
+  }, [isPaused, refreshInterval, addLog]);
 
   // Run Speed Test
   const handleRunSpeedTest = async () => {
@@ -400,7 +456,9 @@ export default function App() {
           cyberSound.playClick();
           const p = await measureHttpPing(pingTargets[0]?.host || 'cloudflare.com');
           setCurrentPing(p);
-          addLog('info', `Manual probe completed: ${p}ms`, 'Probe');
+          setPingHistory((prev) => [...prev.slice(1), p]);
+          await refreshTelemetryData();
+          addLog('info', `Full manual probe completed: ${p}ms. Telemetry refreshed.`, 'Probe');
         }}
         isPaused={isPaused}
         onTogglePause={() => {
@@ -702,13 +760,8 @@ export default function App() {
               theme={theme}
               onRefresh={async () => {
                 cyberSound.playClick();
-                const updated = await fetchPublicNetworkInfo();
-                setTelemetry((prev) => ({
-                  ...prev,
-                  ...updated,
-                  lastUpdated: new Date().toLocaleTimeString(),
-                }));
-                addLog('info', 'Technical network parameters refreshed.', 'System');
+                await refreshTelemetryData();
+                addLog('info', 'Technical network telemetry and Geo-IP parameters refreshed.', 'System');
               }}
               lang={lang}
             />
