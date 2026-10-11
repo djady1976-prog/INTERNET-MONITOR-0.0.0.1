@@ -30,17 +30,19 @@ export const WindowsInstallerModal: React.FC<Props> = ({ isOpen, onClose, lang }
   const handleDownloadAgent = () => {
     cyberSound.playClick();
     const content = generatePowerShellAgent();
-    downloadFile('NetPulse-Windows-Agent.ps1', content, 'application/x-powershell');
-    setDownloadSuccess('PowerShell Agent (.ps1) OK');
+    downloadFile('NetPulse-Windows-Daemon.bat', content, 'application/x-bat');
+    setDownloadSuccess('Daemon Windows (.bat) pregătit');
     setTimeout(() => setDownloadSuccess(null), 4000);
   };
 
   const handleDownloadBatch = () => {
     cyberSound.playClick();
-    const currentUrl = window.location.href;
-    const content = generateBatchInstaller(currentUrl);
+    const cleanOrigin = window.location.origin || 'https://ais-pre-bs6f727x7xca3snddw6co2-364287489555.europe-west3.run.app';
+    const cleanPath = window.location.pathname || '/';
+    const cleanUrl = `${cleanOrigin}${cleanPath}`.replace(/\/+$/, '');
+    const content = generateBatchInstaller(cleanUrl);
     downloadFile('NetPulse-Desktop-Setup.bat', content, 'application/x-bat');
-    setDownloadSuccess('Windows Desktop Setup (.bat) OK');
+    setDownloadSuccess('Instalator Desktop (.bat) pregătit');
     setTimeout(() => setDownloadSuccess(null), 4000);
   };
 
@@ -175,6 +177,19 @@ export const WindowsInstallerModal: React.FC<Props> = ({ isOpen, onClose, lang }
             <span>
               {t.certifiedSecurity}
             </span>
+          </div>
+
+          {/* Troubleshooting Startup Guide */}
+          <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200/90 space-y-1.5">
+            <div className="font-bold flex items-center gap-1.5 text-amber-300">
+              <Laptop className="w-4 h-4" />
+              <span>Ghid de Pornire: Cum lansați NetPulse pe calculator</span>
+            </div>
+            <ul className="list-disc pl-5 space-y-1 text-[11px] text-amber-200/80">
+              <li><strong>Pasul 1 (Desktop Setup .bat):</strong> Rulați fișierul <code>NetPulse-Desktop-Setup.bat</code> descărcat. Acesta creează automat scurtătura <em>NetPulse Neon</em> pe Desktop (chiar și cu OneDrive activ) și lansează aplicația într-o fereastră nativă dedicată.</li>
+              <li><strong>Pasul 2 (Instalare directă PWA):</strong> În Microsoft Edge sau Google Chrome, apăsați pe pictograma de monitor / instalare (💻) din bara de adrese sus-dreapta. Aplicația se instalează direct în Start Menu și Taskbar.</li>
+              <li><strong>Pasul 3 (Dacă rulați din fișiere locale):</strong> În folderul descărcat al programului, dați dublu-click pe fișierul <code>START-NETPULSE.bat</code> pentru verificare automată Node.js și pornire locală la <code>http://localhost:3000</code>.</li>
+            </ul>
           </div>
         </div>
 

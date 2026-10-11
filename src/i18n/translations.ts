@@ -142,6 +142,12 @@ export interface TranslationSchema {
   // Histogram
   histogramTitle: string;
   latencyConsistency: string;
+  histogramModeJitter: string;
+  histogramModeLatency: string;
+  histogramMeanJitter: string;
+  histogramPeakJitter: string;
+  histogramStdDev: string;
+  histogramSamples: string;
 
   // Waveform
   waveformTitle: string;
@@ -357,7 +363,13 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
 
     // Histogram
     histogramTitle: 'Histogramă Distribuție Spectrală Jitter',
-    latencyConsistency: 'Consistență Latență',
+    latencyConsistency: 'Consistență Latență & Varianță DSP',
+    histogramModeJitter: 'Jitter Varianță (PDV)',
+    histogramModeLatency: 'Spectru Latență (RTT)',
+    histogramMeanJitter: 'Jitter Mediu',
+    histogramPeakJitter: 'Vârf Maxim',
+    histogramStdDev: 'Deviație Std (σ)',
+    histogramSamples: 'Eșantioane',
 
     // Waveform
     waveformTitle: 'Osciloscop Undă & Frecvență Pachete',
@@ -572,7 +584,13 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
 
     // Histogram
     histogramTitle: 'Spectral Jitter Distribution Histogram',
-    latencyConsistency: 'Latency Consistency',
+    latencyConsistency: 'Latency Consistency & DSP Variance',
+    histogramModeJitter: 'Jitter Variance (PDV)',
+    histogramModeLatency: 'Latency Spectrum (RTT)',
+    histogramMeanJitter: 'Mean Jitter',
+    histogramPeakJitter: 'Peak Spike',
+    histogramStdDev: 'Std Deviation (σ)',
+    histogramSamples: 'Samples',
 
     // Waveform
     waveformTitle: 'Packet Frequency Oscilloscope',
@@ -787,7 +805,13 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
 
     // Histogram
     histogramTitle: 'Istogramma Distribuzione Spettrale Jitter',
-    latencyConsistency: 'Consistenza Latenza',
+    latencyConsistency: 'Consistenza Latenza & Varianza DSP',
+    histogramModeJitter: 'Varianza Jitter (PDV)',
+    histogramModeLatency: 'Spettro Latenza (RTT)',
+    histogramMeanJitter: 'Jitter Medio',
+    histogramPeakJitter: 'Picco Massimo',
+    histogramStdDev: 'Deviazione Std (σ)',
+    histogramSamples: 'Campioni',
 
     // Waveform
     waveformTitle: 'Oscilloscopio Frequenza Pacchetti',
@@ -1002,7 +1026,13 @@ export const translations: Record<SupportedLanguage, TranslationSchema> = {
 
     // Histogram
     histogramTitle: 'Spektrales Jitter-Verteilungshistogramm',
-    latencyConsistency: 'Latenzkonsistenz',
+    latencyConsistency: 'Latenzkonsistenz & DSP-Varianz',
+    histogramModeJitter: 'Jitter-Varianz (PDV)',
+    histogramModeLatency: 'Latenz-Spektrum (RTT)',
+    histogramMeanJitter: 'Mittlerer Jitter',
+    histogramPeakJitter: 'Max. Spitze',
+    histogramStdDev: 'Std-Abweichung (σ)',
+    histogramSamples: 'Stichproben',
 
     // Waveform
     waveformTitle: 'Paketfrequenz-Oszilloskop',

@@ -127,6 +127,7 @@ export default function App() {
   // Network State
   const [pingTargets, setPingTargets] = useState<PingResult[]>(INITIAL_PING_TARGETS);
   const [pingHistory, setPingHistory] = useState<number[]>([14, 15, 13, 16, 14, 15, 14, 13, 15, 14, 16]);
+  const [jitterHistory, setJitterHistory] = useState<number[]>([1.1, 0.9, 1.4, 1.0, 1.3, 0.8, 1.2, 1.1, 1.5, 0.9, 1.2]);
   const [currentPing, setCurrentPing] = useState(14);
   const [jitter, setJitter] = useState(1.2);
   const [packetLoss, setPacketLoss] = useState(0);
@@ -271,10 +272,16 @@ export default function App() {
         });
 
         // RFC 3550 standard rolling jitter computation (smoothed exponential filter)
+        let computedJitter = 1.2;
         setJitter((prevJitter) => {
           const diff = Math.abs(measured - prevPing);
           const next = prevJitter + (diff - prevJitter) / 16;
-          return Math.max(0.5, Math.round(next * 10) / 10);
+          computedJitter = Math.max(0.3, Math.round(next * 10) / 10);
+          return computedJitter;
+        });
+        setJitterHistory((prev) => {
+          const next = [...prev, computedJitter];
+          return next.length > 60 ? next.slice(1) : next;
         });
 
         // Realistic packet loss estimation based on timeouts
@@ -383,6 +390,7 @@ export default function App() {
       telemetry,
       currentPing,
       jitter,
+      jitterHistory,
       packetLoss,
       qos,
       speedTest,
@@ -455,10 +463,14 @@ export default function App() {
         onRefreshAll={async () => {
           cyberSound.playClick();
           const p = await measureHttpPing(pingTargets[0]?.host || 'cloudflare.com');
+          const delta = Math.abs(p - currentPing);
+          const newJitter = Math.max(0.3, Math.round((jitter + (delta - jitter) / 16) * 10) / 10);
           setCurrentPing(p);
+          setJitter(newJitter);
           setPingHistory((prev) => [...prev.slice(1), p]);
+          setJitterHistory((prev) => [...prev.slice(1), newJitter]);
           await refreshTelemetryData();
-          addLog('info', `Full manual probe completed: ${p}ms. Telemetry refreshed.`, 'Probe');
+          addLog('info', `Full manual probe completed: ${p}ms (Jitter: ${newJitter}ms). Telemetry refreshed.`, 'Probe');
         }}
         isPaused={isPaused}
         onTogglePause={() => {
@@ -724,7 +736,14 @@ export default function App() {
 
           {/* Jitter Spectral Histogram */}
           {isWidgetVisible('histogram') && (
-            <JitterHistogramChart pingHistory={pingHistory} theme={theme} lang={lang} />
+            <JitterHistogramChart
+              pingHistory={pingHistory}
+              jitterHistory={jitterHistory}
+              currentJitter={jitter}
+              currentPing={currentPing}
+              theme={theme}
+              lang={lang}
+            />
           )}
 
           {/* Live Waveform Oscilloscope */}
