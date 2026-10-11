@@ -1,0 +1,6 @@
+{
+  "name": "NetPulse Neon - Monitor Internet & Rețea Windows",
+  "description": "Software futurist dark-neon pentru monitorizarea conexiunii la internet pe Windows cu grafice în timp real, teste de viteză, traceroute, analiză pachete și tablou de bord personalizabil.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .neon-glow-cyan {
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.25), inset 0 0 15px rgba(0, 243, 255, 0.05);
+  }
+  .neon-glow-magenta {
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.25), inset 0 0 15px rgba(255, 0, 127, 0.05);
+  }
+  .neon-glow-emerald {
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.25), inset 0 0 15px rgba(0, 255, 136, 0.05);
+  }
+  .neon-glow-amber {
+    box-shadow: 0 0 15px rgba(255, 170, 0, 0.25), inset 0 0 15px rgba(255, 170, 0, 0.05);
+  }
+  .neon-glow-violet {
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.25), inset 0 0 15px rgba(168, 85, 247, 0.05);
+  }
+  .neon-text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+  .cyber-grid-bg {
+    background-size: 32px 32px;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  }
+  .scanline-overlay {
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%, 
+      rgba(0, 0, 0, 0.25) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+}
+
+/* Custom sleek scrollbar for cyber dark aesthetics */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #080b11;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+@keyframes sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar-sweep {
+  animation: sweep 4s linear infinite;
+  transform-origin: center center;
+}

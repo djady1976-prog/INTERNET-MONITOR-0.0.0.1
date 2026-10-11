@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06090e" />
+      <stop offset="50%" stop-color="#0b1320" />
+      <stop offset="100%" stop-color="#020408" />
+    </linearGradient>
+    <linearGradient id="cyanNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f3ff" />
+      <stop offset="100%" stop-color="#0066ff" />
+    </linearGradient>
+    <linearGradient id="magentaNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff007f" />
+      <stop offset="100%" stop-color="#7928ca" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGrad)" />
+  <rect width="504" height="504" x="4" y="4" rx="96" fill="none" stroke="#00f3ff" stroke-width="3" stroke-opacity="0.3" />
+  
+  <!-- Radar circles -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#00f3ff" stroke-width="2" stroke-opacity="0.15" stroke-dasharray="6,6" />
+  <circle cx="256" cy="256" r="120" fill="none" stroke="#00f3ff" stroke-width="2" stroke-opacity="0.25" />
+  <circle cx="256" cy="256" r="60" fill="none" stroke="#00f3ff" stroke-width="2" stroke-opacity="0.4" />
+  
+  <!-- Grid crosshair -->
+  <line x1="256" y1="56" x2="256" y2="456" stroke="#00f3ff" stroke-width="1.5" stroke-opacity="0.2" />
+  <line x1="56" y1="256" x2="456" y2="256" stroke="#00f3ff" stroke-width="1.5" stroke-opacity="0.2" />
+  
+  <!-- Cyber Pulse Waveform -->
+  <path d="M 80 256 L 160 256 L 190 190 L 220 330 L 256 120 L 290 390 L 325 210 L 355 270 L 380 256 L 432 256" 
+        fill="none" stroke="url(#cyanNeon)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+        
+  <!-- Glowing Center & Satellite Nodes -->
+  <circle cx="256" cy="120" r="10" fill="#00f3ff" filter="url(#glow)" />
+  <circle cx="290" cy="390" r="10" fill="#ff007f" filter="url(#glow)" />
+  <circle cx="190" cy="190" r="8" fill="#00ff88" filter="url(#glow)" />
+  <circle cx="325" cy="210" r="8" fill="#00f3ff" filter="url(#glow)" />
+  
+  <!-- Signal waves on top -->
+  <path d="M 216 100 A 50 50 0 0 1 296 100" fill="none" stroke="#00f3ff" stroke-width="4" stroke-linecap="round" stroke-opacity="0.8" filter="url(#glow)" />
+  <path d="M 196 80 A 80 80 0 0 1 316 80" fill="none" stroke="#00f3ff" stroke-width="4" stroke-linecap="round" stroke-opacity="0.5" filter="url(#glow)" />
+</svg>
